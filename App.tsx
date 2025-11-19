@@ -198,7 +198,7 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-100 via-purple-50 to-white">
       <header className="bg-gradient-to-r from-indigo-600 to-purple-700 fixed top-0 w-full z-10 shadow-md">
         <div className="container mx-auto px-4 py-4 flex items-center justify-center">
           <div className="text-center">
@@ -208,7 +208,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="container mx-auto p-4 md:p-8 pt-36 pb-20">
+      <main className="container mx-auto p-4 md:p-8 pt-36 pb-8 flex-grow">
         <div className="max-w-2xl mx-auto relative bg-white/70 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl mb-4 border border-white/50">
           <form onSubmit={handleSubmit}>
             <div className="mb-6 p-4 rounded-2xl bg-indigo-50/60 border border-indigo-200/70">
@@ -327,12 +327,22 @@ const App: React.FC = () => {
                 </div>
                 <h2 className="text-3xl font-bold text-gray-800">به هوش یار خوش آمدید</h2>
                 <p className="text-gray-600 mt-2 text-lg">دستیار سلامت هوشمند شما، آماده پاسخگویی به سوالاتتان است.</p>
-                <p className="text-gray-500 mt-4 text-sm">
-                    تاریخ و ساعت فعلی: {currentDate.toLocaleDateString('fa-IR')} - {currentDate.toLocaleTimeString('fa-IR')}
-                </p>
             </div>
         )}
       </main>
+
+      <footer className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] mt-auto">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-2">
+          <div className="text-center md:text-right">
+            <p className="font-medium text-base sm:text-lg">طراحی و توسعه: حسین نصاری</p>
+          </div>
+          <div className="text-center md:text-left text-sm sm:text-base text-indigo-100 dir-ltr font-mono">
+            <span>{currentDate.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            <span className="mx-2">|</span>
+            <span dir="ltr">{currentDate.toLocaleTimeString('fa-IR')}</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
