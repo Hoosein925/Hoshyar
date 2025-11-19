@@ -2,7 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { HealthTopicInfo } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+// FIX: Per coding guidelines, the API key must be obtained from process.env.API_KEY.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const responseSchema = {
   type: Type.OBJECT,
