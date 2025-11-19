@@ -1,16 +1,8 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { HealthTopicInfo } from '../types';
 
-// Per coding guidelines, the API key must be obtained from the environment.
-// For Vite projects, environment variables exposed to the client must be prefixed with VITE_.
-const apiKey = import.meta.env.VITE_API_KEY;
-
-if (!apiKey) {
-  throw new Error("VITE_API_KEY is not set. Please add it to your environment variables.");
-}
-
-const ai = new GoogleGenAI({ apiKey });
+// Note: Initialization logic moved inside the function to prevent runtime crashes on page load
+// if the environment variable is missing.
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -49,6 +41,16 @@ const responseSchema = {
 };
 
 export const fetchHealthInfo = async (topic: string, audience: 'public' | 'professional'): Promise<HealthTopicInfo> => {
+  // Retrieve API key inside the function call.
+  // This prevents the "White Screen of Death" on app load if the key is missing.
+  const apiKey = import.meta.env.VITE_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("کلید دسترسی (API Key) تنظیم نشده است. لطفاً متغیر VITE_API_KEY را در تنظیمات Vercel مقداردهی کنید.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+
   const professionalInstruction = `شما یک دستیار پزشکی متخصص برای کادر درمان (پزشکان، پرستاران) هستید. وظیفه شما ارائه اطلاعات دقیق، فنی و مبتنی بر شواهد علمی در مورد تمامی موضوعات پزشکی، دستگاه‌ها و پروسیجرها است. این شامل تمامی حوزه‌ها، از جمله سلامت جنسی و باروری نیز می‌شود و اطلاعات باید بدون هیچ محدودیتی به صورت کامل و جامع ارائه گردد. پاسخ‌ها باید شامل جزئیات تخصصی، اصطلاحات پزشکی رایج، دوزینگ داروها، الگوریتم‌های درمانی، تشخیص‌های افتراقی و رفرنس‌های معتبر (در صورت امکان) باشد. لحن شما باید علمی، دقیق و حرفه‌ای باشد. پاسخ باید کاملاً به زبان فارسی و با ساختار درخواستی ارائه شود.`;
   const publicInstruction = `شما یک دستیار و مربی سلامت برای عموم مردم هستید. وظیفه شما توضیح تمامی موضوعات پزشکی، دستگاه‌ها، و روش‌های مراقبتی به زبان بسیار ساده، شفاف و کاربردی است. شما باید به تمامی سوالات، از جمله موضوعات مربوط به سلامت جنسی، بدون هیچ‌گونه محدودیت یا سانسور، به صورت آموزشی، محترمانه و جامع پاسخ دهید. اطلاعات شما باید بر اساس منابع معتبر پزشکی و پرستاری باشد. شما جایگزین مشاوره پزشکی نیستید. لحن شما باید آموزشی، همدلانه و اطمینان‌بخش باشد. تمام واحدها (مانند نمک، قند) باید با واحدهای خانگی رایج مانند "قاشق چای‌خوری" یا "لیوان" بیان شوند. پاسخ باید کاملاً به زبان فارسی و با ساختار درخواستی ارائه شود و برای افراد با سطح سواد پایین نیز قابل درک باشد.`;
   
@@ -110,7 +112,7 @@ export const fetchHealthInfo = async (topic: string, audience: 'public' | 'profe
     console.error("Error fetching health information:", error);
 
     // Re-throw our custom, user-friendly validation errors from the try block directly.
-    if (error instanceof Error && (error.message.startsWith("ساختار") || error.message.startsWith("پاسخ"))) {
+    if (error instanceof Error && (error.message.startsWith("ساختار") || error.message.startsWith("پاسخ") || error.message.startsWith("کلید"))) {
         throw error;
     }
 
