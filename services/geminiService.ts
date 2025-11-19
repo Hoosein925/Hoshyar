@@ -2,8 +2,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { HealthTopicInfo } from '../types';
 
-// FIX: Per coding guidelines, the API key must be obtained from process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Per coding guidelines, the API key must be obtained from the environment.
+// For Vite projects, environment variables exposed to the client must be prefixed with VITE_.
+const apiKey = import.meta.env.VITE_API_KEY;
+
+if (!apiKey) {
+  throw new Error("VITE_API_KEY is not set. Please add it to your environment variables.");
+}
+
+const ai = new GoogleGenAI({ apiKey });
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -134,7 +141,11 @@ export const fetchHealthInfo = async (topic: string, audience: 'public' | 'profe
             }
         } else {
             // It's a plain string error message.
-            userMessage = `خطا در دریافت اطلاعات: ${errorMessage}`;
+            if (errorMessage.includes('API key not valid')) {
+                userMessage = "کلید API ارائه شده معتبر نیست. لطفاً تنظیمات Vercel خود را بررسی کنید.";
+            } else {
+                userMessage = `خطا در دریافت اطلاعات: ${errorMessage}`;
+            }
         }
       }
     } else if (typeof error === 'object' && error !== null) {
